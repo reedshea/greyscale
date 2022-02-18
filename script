@@ -1,10 +1,6 @@
-tell application "System Preferences"
-	set the current pane to pane id "com.apple.preference.universalaccess"
-	tell application "System Events" to tell process "System Preferences" to tell window "Accessibility"
-		#Row 5 is the "Display" preferences page
-		select row 5 of table 1 of scroll area 1
-		click radio button "Color Filters" of tab group 1 of group 1
-		click checkbox "Enable Color Filters" of tab group 1 of group 1
-	end tell
+tell application "System Events" to tell process "System Preferences" to tell window "Accessibility"
+	#Row 5 is the "Display" preferences page
+	select row 5 of table 1 of scroll area 1
+	click radio button "Color Filters" of tab group 1 of group 1
+	click checkbox "Enable Color Filters" of tab group 1 of group 1
 end tell
-tell application "System Preferences" to quit
