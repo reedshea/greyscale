@@ -1,0 +1,7 @@
+# Running this in macOS Script Editor will output the UI element paths for System Settings
+
+tell application "System Events"
+	tell process "System Settings"
+		set uiElems to entire contents
+	end tell
+end tell
