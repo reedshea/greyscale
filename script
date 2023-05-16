@@ -1,12 +1,3 @@
-# Prerequisites:
-#  	- Under System Settings / Accessibility / Shortcut, disable all shortcuts
-#	  except for "Color Filters"
-#	- Under System Settings / Accessibility / Display, set the Color Filters
-#	  "Filter type" to "Grayscale"
-# 	- Save this script as an Application
-# 	- Under System Settings / Privacy & Security / Accessibility, add the
-#	  application to the list of apps that are allowed to control the computer
-
 tell application "System Events"
 	key code 96 using {command down, option down}
 end tell
