@@ -1,20 +1,12 @@
-# Updated for macOS 13 Ventura. This relies on waiting for the UI to load, and is a bit brittle.
-
-do shell script "open -b com.apple.systempreferences " & ¬
-	"/System/Library/PreferencePanes/UniversalAccessPref.prefPane"
-delay 1
+# Prerequisites:
+#  	- Under System Settings / Accessibility / Shortcut, disable all shortcuts
+#	  except for "Color Filters"
+#	- Under System Settings / Accessibility / Display, set the Color Filters
+#	  "Filter type" to "Grayscale"
+# 	- Save this script as an Application
+# 	- Under System Settings / Privacy & Security / Accessibility, add the
+#	  application to the list of apps that are allowed to control the computer
 
 tell application "System Events"
-	tell its application process "System Settings"
-		
-		# Navigate to "Accessibility" preferences pane
-		click menu item "Accessibility" of menu "View" of menu bar item "View" of menu bar 1 of application process "System Settings" of application "System Events"
-		
-		# Navigate to "Display" preferences page
-		click UI element 3 of group 1 of scroll area 1 of group 1 of group 2 ¬
-			of splitter group 1 of group 1 of window "Accessibility" of application process "System Settings" of application "System Events"
-		
-		# Toggle Color Filters
-		click checkbox "Color filters" of group 4 of scroll area 1 of group 1 of group 2 of splitter group 1 of group 1 of window "Display" of application process "System Settings" of application "System Events"
-	end tell
+	key code 96 using {command down, option down}
 end tell
