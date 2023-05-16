@@ -12,4 +12,4 @@ toggles between color and greyscale.
   application to the list of apps that are allowed to control the computer
 
 # Credits
-* The logo (`greyscale.webp) is pilfered from [Gray-Switch](https://play.google.com/store/apps/details?id=com.vegardit.grayswitch)
+* The logo (`greyscale.webp`) is pilfered from [Gray-Switch](https://play.google.com/store/apps/details?id=com.vegardit.grayswitch)
