@@ -1,4 +1,4 @@
-# macOS Grayscale shortcut app
+# macOS greyscale shortcut app
 
 The AppleScript in the `script` file can be used to create a macoOS App that
 toggles between color and greyscale.
