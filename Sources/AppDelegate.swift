@@ -7,8 +7,6 @@ import AppKit
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
-    private var grayscaleWasOn = false
-
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
 
@@ -18,7 +16,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             button.target = self
         }
 
-        grayscaleWasOn = grayscaleEnabled()
         updateIcon()
 
         // Update our icon if grayscale is toggled via System Settings
@@ -26,15 +23,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self,
             selector: #selector(accessibilityDisplayOptionsChanged),
             name: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification,
-            object: nil
-        )
-
-        // Re-apply grayscale after wake from sleep (CGDisplayForceToGray
-        // doesn't persist through sleep on its own)
-        NSWorkspace.shared.notificationCenter.addObserver(
-            self,
-            selector: #selector(didWake),
-            name: NSWorkspace.didWakeNotification,
             object: nil
         )
     }
@@ -46,20 +34,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             showMenu()
         } else {
             toggleGrayscale()
-            grayscaleWasOn = grayscaleEnabled()
             updateIcon()
         }
     }
 
     @objc private func accessibilityDisplayOptionsChanged() {
-        grayscaleWasOn = grayscaleEnabled()
         updateIcon()
-    }
-
-    @objc private func didWake() {
-        if grayscaleWasOn {
-            enableGrayscale()
-        }
     }
 
     private func showMenu() {

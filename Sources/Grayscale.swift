@@ -1,21 +1,25 @@
-// Grayscale.swift — Core toggle logic using CGDisplayForceToGray
+// Grayscale.swift — Core toggle logic
 // See Sources/Bridge.h for details on the private API declarations.
 
 import Foundation
 
 /// Returns true if the system grayscale display filter is currently active.
 func grayscaleEnabled() -> Bool {
-    return CGDisplayUsesForceToGray()
+    return MADisplayFilterPrefGetCategoryEnabled(SYSTEM_FILTER)
+        && (MADisplayFilterPrefGetType(SYSTEM_FILTER) == GRAYSCALE_TYPE)
 }
 
 /// Enables the system grayscale display filter.
 func enableGrayscale() {
-    CGDisplayForceToGray(true)
+    MADisplayFilterPrefSetType(SYSTEM_FILTER, GRAYSCALE_TYPE)
+    MADisplayFilterPrefSetCategoryEnabled(SYSTEM_FILTER, true)
+    _UniversalAccessDStart(UNIVERSALACCESSD_MAGIC)
 }
 
 /// Disables the system grayscale display filter.
 func disableGrayscale() {
-    CGDisplayForceToGray(false)
+    MADisplayFilterPrefSetCategoryEnabled(SYSTEM_FILTER, false)
+    _UniversalAccessDStart(UNIVERSALACCESSD_MAGIC)
 }
 
 /// Toggles the system grayscale display filter.
