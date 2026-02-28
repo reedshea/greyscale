@@ -8,6 +8,8 @@
     <string>com.greyscale.toggle</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>CFBundleName</key>
     <string>Greyscale</string>
     <key>CFBundlePackageType</key>

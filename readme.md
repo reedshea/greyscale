@@ -35,6 +35,45 @@ On first launch, macOS Gatekeeper will block the unsigned app. Right-click the a
 
 The icon reflects the current state and stays in sync if you toggle greyscale via System Settings.
 
+## Release
+
+To build a signed, notarized DMG for distribution:
+
+```
+brew install create-dmg   # one-time, for the drag-to-Applications DMG layout
+make release IDENTITY="Developer ID Application: Your Name (TEAMID)"
+```
+
+This runs `sign` → `dmg` → `notarize` and produces `build/Greyscale-2.0.dmg`.
+
+Before your first notarization, store your App Store Connect credentials:
+
+```
+xcrun notarytool store-credentials notary \
+  --apple-id you@example.com \
+  --team-id TEAMID \
+  --password <app-specific-password>
+```
+
+You can also run the targets individually (`make sign`, `make dmg`, `make notarize`).
+
+### App icon
+
+Place your icon at `Resources/AppIcon.icns`. To generate from a 1024x1024 PNG:
+
+```
+mkdir AppIcon.iconset
+for size in 16 32 128 256 512; do
+  sips -z $size $size icon.png --out AppIcon.iconset/icon_${size}x${size}.png
+  sips -z $((size*2)) $((size*2)) icon.png --out AppIcon.iconset/icon_${size}x${size}@2x.png
+done
+iconutil -c icns AppIcon.iconset -o Resources/AppIcon.icns
+```
+
+### DMG background
+
+Optionally place a `Resources/dmg-background.png` (typically 540x380) to use as the DMG window background.
+
 ## Requirements
 
 - macOS 10.15 (Catalina) or later
