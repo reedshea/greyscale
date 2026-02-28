@@ -22,20 +22,39 @@ IDENTITY ?= Developer ID Application
 NOTARY_PROFILE ?= notary
 DMG = $(BUILD_DIR)/$(APP_NAME)-$(VERSION).dmg
 
-.PHONY: all clean install sign dmg notarize release
+ICON_SOURCE = Resources/icon.png
+ICONSET = Resources/AppIcon.iconset
+ICNS = Resources/AppIcon.icns
+
+.PHONY: all clean install sign dmg notarize release icon
 
 all: $(BUNDLE)
 
-$(BUNDLE): $(SWIFT_FILES) $(BRIDGE_HEADER) Resources/Info.plist
+$(ICNS): $(ICON_SOURCE)
+	@mkdir -p $(ICONSET)
+	sips -z 16 16     $(ICON_SOURCE) --out $(ICONSET)/icon_16x16.png
+	sips -z 32 32     $(ICON_SOURCE) --out $(ICONSET)/icon_16x16@2x.png
+	sips -z 32 32     $(ICON_SOURCE) --out $(ICONSET)/icon_32x32.png
+	sips -z 64 64     $(ICON_SOURCE) --out $(ICONSET)/icon_32x32@2x.png
+	sips -z 128 128   $(ICON_SOURCE) --out $(ICONSET)/icon_128x128.png
+	sips -z 256 256   $(ICON_SOURCE) --out $(ICONSET)/icon_128x128@2x.png
+	sips -z 256 256   $(ICON_SOURCE) --out $(ICONSET)/icon_256x256.png
+	sips -z 512 512   $(ICON_SOURCE) --out $(ICONSET)/icon_256x256@2x.png
+	sips -z 512 512   $(ICON_SOURCE) --out $(ICONSET)/icon_512x512.png
+	sips -z 1024 1024 $(ICON_SOURCE) --out $(ICONSET)/icon_512x512@2x.png
+	iconutil -c icns $(ICONSET) -o $(ICNS)
+	@echo "Generated $(ICNS)"
+
+icon: $(ICNS)
+
+$(BUNDLE): $(SWIFT_FILES) $(BRIDGE_HEADER) Resources/Info.plist $(ICNS)
 	@mkdir -p $(BUILD_DIR)
 	$(SWIFTC) $(SWIFTFLAGS) $(SWIFT_FILES) -o $(BUILD_DIR)/$(APP_NAME)
 	@mkdir -p $(BUNDLE_MACOS)
 	@mkdir -p $(BUNDLE_RESOURCES)
 	@mv $(BUILD_DIR)/$(APP_NAME) $(BUNDLE_MACOS)/$(APP_NAME)
 	@cp Resources/Info.plist $(BUNDLE_CONTENTS)/Info.plist
-	@if [ -f Resources/AppIcon.icns ]; then \
-		cp Resources/AppIcon.icns $(BUNDLE_RESOURCES)/AppIcon.icns; \
-	fi
+	@cp $(ICNS) $(BUNDLE_RESOURCES)/AppIcon.icns
 	@echo "Built $(BUNDLE)"
 
 clean:
