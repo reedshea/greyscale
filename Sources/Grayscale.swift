@@ -11,15 +11,18 @@ func grayscaleEnabled() -> Bool {
 
 /// Enables the system grayscale display filter.
 func enableGrayscale() {
+    // Instant visual change (no system dialog)
+    CGDisplayForceToGray(true)
+    // Write preferences so System Settings stays in sync
+    // and the daemon restores grayscale after sleep/wake
     MADisplayFilterPrefSetType(SYSTEM_FILTER, GRAYSCALE_TYPE)
     MADisplayFilterPrefSetCategoryEnabled(SYSTEM_FILTER, true)
-    _UniversalAccessDStart(UNIVERSALACCESSD_MAGIC)
 }
 
 /// Disables the system grayscale display filter.
 func disableGrayscale() {
+    CGDisplayForceToGray(false)
     MADisplayFilterPrefSetCategoryEnabled(SYSTEM_FILTER, false)
-    _UniversalAccessDStart(UNIVERSALACCESSD_MAGIC)
 }
 
 /// Toggles the system grayscale display filter.

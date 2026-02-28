@@ -39,6 +39,17 @@ extern void MADisplayFilterPrefSetType(int filter, int type)
 extern void _UniversalAccessDStart(int magic)
     __attribute__((weak_import));
 
+// --- CoreGraphics (private but no framework load needed) ---
+// Instant visual toggle at the display level. Does not persist through
+// sleep on its own, but we pair it with MediaAccessibility prefs so the
+// daemon restores the correct state on wake.
+
+extern bool CGDisplayUsesForceToGray(void)
+    __attribute__((weak_import));
+
+extern void CGDisplayForceToGray(bool enable)
+    __attribute__((weak_import));
+
 // --- Constants ---
 
 static const int SYSTEM_FILTER = 0x1;
