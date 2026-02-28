@@ -57,7 +57,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Try SF Symbols (macOS 11+), fall back to text
         var image: NSImage? = nil
         if #available(macOS 11.0, *) {
-            let symbolName = isOn ? "circle.lefthalf.filled" : "circle"
+            let symbolName = isOn ? "swatchpalette" : "swatchpalette.fill"
             image = NSImage(systemSymbolName: symbolName, accessibilityDescription: "Greyscale")
         }
 
