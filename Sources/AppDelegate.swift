@@ -55,14 +55,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let button = statusItem.button else { return }
         let isOn = grayscaleEnabled()
 
+        // Try SF Symbols (macOS 11+), fall back to text
+        var image: NSImage? = nil
         if #available(macOS 11.0, *) {
-            let symbolName = isOn ? "circle.lefthalf.filled" : "circle.lefthalf.strikethrough"
-            let config = NSImage.SymbolConfiguration(pointSize: 16, weight: .regular)
-            button.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: "Greyscale")?
-                .withSymbolConfiguration(config)
+            let symbolName = isOn ? "circle.lefthalf.filled" : "circle"
+            image = NSImage(systemSymbolName: symbolName, accessibilityDescription: "Greyscale")
+        }
+
+        if let image = image {
+            button.image = image
+            button.title = ""
         } else {
-            button.title = isOn ? "●" : "○"
             button.image = nil
+            button.title = isOn ? "●" : "○"
         }
 
         button.toolTip = isOn ? "Greyscale: ON (click to toggle)" : "Greyscale: OFF (click to toggle)"
