@@ -2,6 +2,8 @@
 
 A macOS menu bar app that toggles your display between color and greyscale with a single click.
 
+**[Download the latest release](https://github.com/reedshea/greyscale/releases/latest)** — grab the DMG, drag to Applications, and go.
+
 Greyscale mode makes your screen feel more like a newspaper than a television — technology is available but fades into the background. This app makes it trivial to flip back and forth.
 
 ## How it works
@@ -26,7 +28,7 @@ make install
 
 Or drag `build/Greyscale.app` to your Applications folder.
 
-On first launch, macOS Gatekeeper will block the unsigned app. Right-click the app and select "Open" to bypass this once.
+If you download the DMG from the [Releases page](https://github.com/reedshea/greyscale/releases/latest), the app is signed and notarized — it will open without any Gatekeeper warnings. If you build from source, right-click the app and select "Open" to bypass Gatekeeper once.
 
 ## Usage
 
