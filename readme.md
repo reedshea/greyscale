@@ -12,9 +12,9 @@ Greyscale mode makes your screen feel more like a newspaper than a television â€
 
 **Click** the menu bar icon to toggle greyscale on/off:
 
-&nbsp;&nbsp;&nbsp;&nbsp;<img src="Resources/swatchpalette.fill.svg" width="16" />&nbsp;&nbsp;Color mode
+&nbsp;&nbsp;&nbsp;&nbsp;<picture><source media="(prefers-color-scheme: dark)" srcset="Resources/swatchpalette.white.fill.svg"><img src="Resources/swatchpalette.black.fill.svg" width="16" alt="Color mode icon"></picture>&nbsp;&nbsp;Color mode
 
-&nbsp;&nbsp;&nbsp;&nbsp;<img src="Resources/swatchpalette.svg" width="16" />&nbsp;&nbsp;Greyscale mode
+&nbsp;&nbsp;&nbsp;&nbsp;<picture><source media="(prefers-color-scheme: dark)" srcset="Resources/swatchpalette.white.svg"><img src="Resources/swatchpalette.black.svg" width="16" alt="Greyscale mode icon"></picture>&nbsp;&nbsp;Greyscale mode
 
 **Right-click** for a menu with an option to quit.
 
