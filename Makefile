@@ -16,9 +16,12 @@ SWIFTFLAGS = -O \
 	-framework MediaAccessibility \
 	-lUniversalAccess
 
-# Release settings — override on command line or export in your shell:
-#   make release IDENTITY="Developer ID Application: Your Name (TEAMID)"
-IDENTITY ?= Developer ID Application
+# Load .env if present (see .env.example for template)
+-include .env
+export
+
+# Release settings
+SIGNING_IDENTITY ?= Developer ID Application
 NOTARY_PROFILE ?= notary
 DMG = $(BUILD_DIR)/$(APP_NAME)-$(VERSION).dmg
 
@@ -68,7 +71,7 @@ install: $(BUNDLE)
 
 sign: $(BUNDLE)
 	codesign --force --deep --options runtime \
-		--sign "$(IDENTITY)" \
+		--sign "$(SIGNING_IDENTITY)" \
 		$(BUNDLE)
 	codesign --verify --verbose $(BUNDLE)
 	@echo "Signed $(BUNDLE)"
