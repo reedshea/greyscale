@@ -23,7 +23,7 @@ Greyscale mode makes your screen feel more like a newspaper than a television â€
 
 ## How it works
 
-The app uses the macOS MediaAccessibility framework to control the system display color filter â€” the same mechanism that System Settings uses internally. This does not require Accessibility permissions or manual System Settings configuration, and it persists through sleep/wake.
+The app uses the macOS MediaAccessibility framework to control the system display color filter, the same mechanism that System Settings uses internally. This does not require Accessibility permissions or manual System Settings configuration, and it persists through sleep/wake.
 
 ## Building from source
 
