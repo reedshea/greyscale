@@ -1,6 +1,9 @@
-# Greyscale
+<p align="center">
+  <img src="Resources/icon.png" alt="Greyscale app icon" width="128">
+  <h1 align="center">Greyscale</h1>
+</p>
 
-A macOS menu bar app that toggles your display between color and greyscale with a single click.
+A macOS menu bar app that toggles your display between color and greyscale with a single click. 
 
 Greyscale mode makes your screen feel more like a newspaper than a television — technology is available but fades into the background. This app makes it trivial to flip back and forth.
 
