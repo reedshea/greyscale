@@ -15,7 +15,7 @@ func nightShiftActive() -> Bool {
     let client = CBBlueLightClient()
     var status = CBBlueLightClient_StatusData_t()
     guard client.getBlueLightStatus(&status) else { return false }
-    return status.active
+    return status.active.boolValue
 }
 
 /// Returns the current Night Shift strength (0.0–1.0). Returns 0 if inactive.
