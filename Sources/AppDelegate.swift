@@ -7,6 +7,8 @@ import AppKit
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
+    private var blueLightClient: CBBlueLightClient?
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
 
@@ -25,6 +27,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             name: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification,
             object: nil
         )
+
+        // Monitor Night Shift status changes (schedule toggles, strength changes)
+        blueLightClient = CBBlueLightClient()
+        blueLightClient?.setStatusNotificationBlock { [weak self] in
+            self?.nightShiftStatusChanged()
+        }
+
+        // Apply warm gamma if greyscale is already on at launch
+        if grayscaleEnabled() && nightShiftActive() {
+            applyWarmGamma()
+        }
+
+        // Re-apply warm gamma after display reconfiguration (sleep/wake)
+        CGDisplayRegisterReconfigurationCallback({ _, flags, _ in
+            guard flags.contains(.addFlag) else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                if grayscaleEnabled() && nightShiftActive() {
+                    applyWarmGamma()
+                }
+            }
+        }, nil)
     }
 
     @objc private func statusBarButtonClicked(_ sender: Any?) {
@@ -40,6 +63,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func accessibilityDisplayOptionsChanged() {
         updateIcon()
+    }
+
+    private func nightShiftStatusChanged() {
+        guard grayscaleEnabled() else { return }
+        if nightShiftActive() {
+            applyWarmGamma()
+        } else {
+            removeWarmGamma()
+        }
     }
 
     private func showMenu() {
@@ -74,5 +106,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         NSWorkspace.shared.notificationCenter.removeObserver(self)
+        removeWarmGamma()
     }
 }

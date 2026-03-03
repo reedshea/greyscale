@@ -50,6 +50,35 @@ extern bool CGDisplayUsesForceToGray(void)
 extern void CGDisplayForceToGray(bool enable)
     __attribute__((weak_import));
 
+// --- CoreBrightness.framework (private) ---
+// Night Shift (Blue Light Reduction) status detection.
+// Located at: /System/Library/PrivateFrameworks/CoreBrightness.framework
+
+typedef struct {
+    int hour;
+    int minute;
+} CBBlueLightClient_Time_t;
+
+typedef struct {
+    CBBlueLightClient_Time_t fromTime;
+    CBBlueLightClient_Time_t toTime;
+} CBBlueLightClient_Schedule_t;
+
+typedef struct {
+    BOOL active;
+    BOOL enabled;
+    BOOL sunSchedulePermitted;
+    int mode;
+    CBBlueLightClient_Schedule_t schedule;
+    unsigned long long disableFlags;
+} CBBlueLightClient_StatusData_t;
+
+@interface CBBlueLightClient : NSObject
+- (BOOL)getBlueLightStatus:(CBBlueLightClient_StatusData_t *)status;
+- (BOOL)getStrength:(float *)strength;
+- (BOOL)setStatusNotificationBlock:(void (^)(void))block;
+@end
+
 // --- Constants ---
 
 static const int SYSTEM_FILTER = 0x1;
