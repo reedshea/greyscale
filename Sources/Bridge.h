@@ -15,6 +15,7 @@
 #ifndef Bridge_h
 #define Bridge_h
 
+#import <Foundation/Foundation.h>
 #include <stdbool.h>
 
 // --- MediaAccessibility.framework ---
