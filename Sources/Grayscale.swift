@@ -51,17 +51,29 @@ func removeWarmGamma() {
 
 /// Enables the system grayscale display filter.
 func enableGrayscale() {
+    // CGDisplayForceToGray applies greyscale at the compositor level.
+    // The hardware gamma LUT (CGSetDisplayTransferByFormula) applies after
+    // the compositor, so warm gamma curves survive on top of this greyscale.
+    CGDisplayForceToGray(true)
+
+    // Also persist via MediaAccessibility so System Settings stays in sync
+    // and universalaccessd restores greyscale on wake.
     MADisplayFilterPrefSetType(SYSTEM_FILTER, GRAYSCALE_TYPE)
     MADisplayFilterPrefSetCategoryEnabled(SYSTEM_FILTER, true)
     _UniversalAccessDStart(UNIVERSALACCESSD_MAGIC)
 
     if nightShiftActive() {
-        applyWarmGamma()
+        // Delay to ensure universalaccessd has finished before we set gamma,
+        // in case it resets the gamma LUT as part of applying its filter.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            applyWarmGamma()
+        }
     }
 }
 
 /// Disables the system grayscale display filter.
 func disableGrayscale() {
+    CGDisplayForceToGray(false)
     MADisplayFilterPrefSetCategoryEnabled(SYSTEM_FILTER, false)
     _UniversalAccessDStart(UNIVERSALACCESSD_MAGIC)
     removeWarmGamma()

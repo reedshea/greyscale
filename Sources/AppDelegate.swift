@@ -39,11 +39,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             applyWarmGamma()
         }
 
-        // Re-apply warm gamma after display reconfiguration (sleep/wake)
+        // Re-apply after display reconfiguration (sleep/wake resets gamma + ForceToGray)
         CGDisplayRegisterReconfigurationCallback({ _, flags, _ in
             guard flags.contains(.addFlag) else { return }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                if grayscaleEnabled() && nightShiftActive() {
+                guard grayscaleEnabled() else { return }
+                CGDisplayForceToGray(true)
+                if nightShiftActive() {
                     applyWarmGamma()
                 }
             }
@@ -63,11 +65,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func accessibilityDisplayOptionsChanged() {
         updateIcon()
+        // Re-apply warm gamma after universalaccessd has finished applying
+        // its filter (which may have reset the gamma LUT).
+        if grayscaleEnabled() && nightShiftActive() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                applyWarmGamma()
+            }
+        }
     }
 
     private func nightShiftStatusChanged() {
         guard grayscaleEnabled() else { return }
         if nightShiftActive() {
+            CGDisplayForceToGray(true)
             applyWarmGamma()
         } else {
             removeWarmGamma()
