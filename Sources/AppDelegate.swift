@@ -7,6 +7,8 @@ import AppKit
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
+    private var blueLightClient: CBBlueLightClient?
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
 
@@ -25,6 +27,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             name: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification,
             object: nil
         )
+
+        // Monitor Night Shift status changes (schedule toggles, strength changes)
+        blueLightClient = CBBlueLightClient()
+        blueLightClient?.setStatusNotificationBlock { [weak self] in
+            self?.nightShiftStatusChanged()
+        }
+
+        // Apply warm gamma if greyscale is already on at launch
+        if grayscaleEnabled() && nightShiftActive() {
+            applyWarmGamma()
+        }
+
+        // Re-apply after display reconfiguration (sleep/wake resets gamma + ForceToGray)
+        CGDisplayRegisterReconfigurationCallback({ _, flags, _ in
+            guard flags.contains(.addFlag) else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                guard grayscaleEnabled() else { return }
+                CGDisplayForceToGray(true)
+                if nightShiftActive() {
+                    applyWarmGamma()
+                }
+            }
+        }, nil)
     }
 
     @objc private func statusBarButtonClicked(_ sender: Any?) {
@@ -40,6 +65,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func accessibilityDisplayOptionsChanged() {
         updateIcon()
+        // Re-apply warm gamma after universalaccessd has finished applying
+        // its filter (which may have reset the gamma LUT).
+        if grayscaleEnabled() && nightShiftActive() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                applyWarmGamma()
+            }
+        }
+    }
+
+    private func nightShiftStatusChanged() {
+        guard grayscaleEnabled() else { return }
+        if nightShiftActive() {
+            CGDisplayForceToGray(true)
+            applyWarmGamma()
+        } else {
+            removeWarmGamma()
+        }
     }
 
     private func showMenu() {
@@ -69,10 +111,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             button.title = isOn ? "●" : "○"
         }
 
-        button.toolTip = isOn ? "Greyscale: ON (click to toggle)" : "Greyscale: OFF (click to toggle)"
+        // button.toolTip = isOn ? "Greyscale: ON (click to toggle)" : "Greyscale: OFF (click to toggle)"
     }
 
     func applicationWillTerminate(_ notification: Notification) {
         NSWorkspace.shared.notificationCenter.removeObserver(self)
+        removeWarmGamma()
     }
 }

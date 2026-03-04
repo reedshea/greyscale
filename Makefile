@@ -14,6 +14,8 @@ SWIFTFLAGS = -O \
 	-import-objc-header $(BRIDGE_HEADER) \
 	-framework Cocoa \
 	-framework MediaAccessibility \
+	-F/System/Library/PrivateFrameworks \
+	-framework CoreBrightness \
 	-lUniversalAccess
 
 # Load .env if present (see .env.example for template)
