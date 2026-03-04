@@ -1,5 +1,5 @@
 APP_NAME = Greyscale
-VERSION  = 2.1
+VERSION  = 2.2
 BUILD_DIR = build
 BUNDLE = $(BUILD_DIR)/$(APP_NAME).app
 BUNDLE_CONTENTS = $(BUNDLE)/Contents
@@ -14,6 +14,7 @@ SWIFTFLAGS = -O \
 	-import-objc-header $(BRIDGE_HEADER) \
 	-framework Cocoa \
 	-framework MediaAccessibility \
+	-framework ServiceManagement \
 	-F/System/Library/PrivateFrameworks \
 	-framework CoreBrightness \
 	-lUniversalAccess
