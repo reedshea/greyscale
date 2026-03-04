@@ -1,5 +1,5 @@
 APP_NAME = Greyscale
-VERSION  = 2.0
+VERSION  = 2.1
 BUILD_DIR = build
 BUNDLE = $(BUILD_DIR)/$(APP_NAME).app
 BUNDLE_CONTENTS = $(BUNDLE)/Contents
