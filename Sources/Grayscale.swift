@@ -65,7 +65,7 @@ func enableGrayscale() {
     if nightShiftActive() {
         // Delay to ensure universalaccessd has finished before we set gamma,
         // in case it resets the gamma LUT as part of applying its filter.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             applyWarmGamma()
         }
     }

@@ -111,7 +111,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             button.title = isOn ? "●" : "○"
         }
 
-        button.toolTip = isOn ? "Greyscale: ON (click to toggle)" : "Greyscale: OFF (click to toggle)"
+        // button.toolTip = isOn ? "Greyscale: ON (click to toggle)" : "Greyscale: OFF (click to toggle)"
     }
 
     func applicationWillTerminate(_ notification: Notification) {
