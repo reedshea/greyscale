@@ -4,12 +4,50 @@
 // Right-click for a menu with Quit.
 
 import AppKit
+import ServiceManagement
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private var blueLightClient: CBBlueLightClient?
 
+    private static let showInDockKey = "ShowInDock"
+    private static let hasLaunchedBeforeKey = "HasLaunchedBefore"
+
+    private var showInDock: Bool {
+        get { UserDefaults.standard.bool(forKey: Self.showInDockKey) }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Self.showInDockKey)
+            NSApp.setActivationPolicy(newValue ? .regular : .accessory)
+        }
+    }
+
+    @available(macOS 13.0, *)
+    private var openAtLogin: Bool {
+        get { SMAppService.mainApp.status == .enabled }
+        set {
+            do {
+                if newValue {
+                    try SMAppService.mainApp.register()
+                } else {
+                    try SMAppService.mainApp.unregister()
+                }
+            } catch {}
+        }
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Apply dock visibility setting
+        if showInDock {
+            NSApp.setActivationPolicy(.regular)
+        }
+
+        // Enable "Open at Login" by default on first launch
+        if !UserDefaults.standard.bool(forKey: Self.hasLaunchedBeforeKey) {
+            UserDefaults.standard.set(true, forKey: Self.hasLaunchedBeforeKey)
+            if #available(macOS 13.0, *) {
+                openAtLogin = true
+            }
+        }
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
 
         if let button = statusItem.button {
@@ -86,10 +124,33 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func showMenu() {
         let menu = NSMenu()
+
+        if #available(macOS 13.0, *) {
+            let loginItem = NSMenuItem(title: "Open at Login", action: #selector(toggleOpenAtLogin), keyEquivalent: "")
+            loginItem.target = self
+            loginItem.state = openAtLogin ? .on : .off
+            menu.addItem(loginItem)
+        }
+
+        let dockItem = NSMenuItem(title: "Show in Dock", action: #selector(toggleShowInDock), keyEquivalent: "")
+        dockItem.target = self
+        dockItem.state = showInDock ? .on : .off
+        menu.addItem(dockItem)
+
+        menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit Greyscale", action: #selector(NSApplication.terminate(_:)), keyEquivalent: ""))
         statusItem.menu = menu
         statusItem.button?.performClick(nil)
         statusItem.menu = nil
+    }
+
+    @available(macOS 13.0, *)
+    @objc private func toggleOpenAtLogin() {
+        openAtLogin.toggle()
+    }
+
+    @objc private func toggleShowInDock() {
+        showInDock.toggle()
     }
 
     private func updateIcon() {
@@ -112,6 +173,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         // button.toolTip = isOn ? "Greyscale: ON (click to toggle)" : "Greyscale: OFF (click to toggle)"
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        toggleGrayscale()
+        updateIcon()
+        return false
     }
 
     func applicationWillTerminate(_ notification: Notification) {
